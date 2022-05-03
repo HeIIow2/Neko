@@ -27,6 +27,7 @@ tag_id = {}
 
 created_images = []
 
+"""
 cursor.execute("SELECT id FROM tag")
 results = cursor.fetchall()
 print(results)
@@ -34,7 +35,7 @@ if len(results) > 0:
   cursor.execute("DELETE FROM image;")
   cursor.execute("DELETE FROM tag;")
   cursor.execute("DELETE FROM image_tag;")
-
+"""
 
 def get_tag_id(tag: str):
     global created_tags
@@ -61,17 +62,17 @@ def get_tag_id(tag: str):
         return tag_id[tag]
 
 
-def get_image_id(url: str, translation: str):
+def get_image_id(url: str, translation: str, sfw: bool):
     if url in created_images:
         return -1
 
     if translation == "":
-        sql = "INSERT INTO image (url) VALUES (%s)"
-        cursor.execute(sql, (url,))
+        sql = "INSERT INTO image (url, sfw) VALUES (%s, %s)"
+        cursor.execute(sql, (url, sfw))
     else:
-        sql = "INSERT INTO image (url, translation ) VALUES (%s, %s)"
+        sql = "INSERT INTO image (url, sfw, translation ) VALUES (%s, %s, %s)"
         try:
-            cursor.execute(sql, (url, "\n".join(translation)))
+            cursor.execute(sql, (url, sfw, "\n".join(translation)))
         except Exception as e:
             print(url)
             print(translation)
@@ -88,8 +89,11 @@ def get_image_id(url: str, translation: str):
 
 def write_element(url: str, tags: list, translation: str):
     global created_tags
+    
+    sfw = not "lewd" in tags
+    
 
-    image_id = get_image_id(url, translation)
+    image_id = get_image_id(url, translation, sfw)
     if image_id == -1:
         print(f"{url} already exists. Skipping...")
         print(f"{tags}")

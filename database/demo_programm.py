@@ -1,5 +1,6 @@
 import mysql.connector
-import urllib.request
+import requests
+import os
 
 # pip install mysql-connector-python
 
@@ -78,13 +79,20 @@ def get_image_url(image_id):
     return cursor.fetchone()[0]
 
 def download_image(image_id):
+    global tag_name
     url = get_image_url(image_id)
-    urllib.request.urlretrieve(url, "./images/{}.png".format(image_id))
+    response = requests.get(url)
+    open(f"./images/{tag_name}/{image_id}.png", "wb").write(response.content)
 
 
 output_tags()
-current_ids = fetch_image_ids("belly free")
+tag_name = input("download tag: ")
+print("----------------------------")
+current_ids = fetch_image_ids(tag_name)
 print(current_ids)
+tag_name = tag_name.replace(" ", "_")
+if not os.path.exists(f"./images/{tag_name}"):
+    os.makedirs(f"./images/{tag_name}")
 for id in current_ids:
     print(get_image_tags(id), get_image_url(id), id, sep="; ")
     download_image(id)
