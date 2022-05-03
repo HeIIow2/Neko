@@ -2,6 +2,8 @@ import mysql.connector
 import requests
 import os
 
+SFW = True
+
 # pip install mysql-connector-python
 
 neko_db = mysql.connector.connect(
@@ -52,14 +54,25 @@ def output_tags():
 
 
 def fetch_image_ids(tag_name):
-    cursor.execute("""
+    if SFW:
+        sql = """
+        SELECT image.id FROM image
+        WHERE image.id IN (
+        SELECT image_id FROM image_tag 
+	        WHERE tag_id=
+            (SELECT id FROM tag WHERE name=%s AND sfw=TRUE)
+        );
+        """
+    else:
+        sql = """
         SELECT image.id FROM image
         WHERE image.id IN (
         SELECT image_id FROM image_tag 
 	        WHERE tag_id=
             (SELECT id FROM tag WHERE name=%s)
         );
-        """, (tag_name,))
+        """
+    cursor.execute(sql, (tag_name,))
     return [row[0] for row in cursor]
 
 def get_image_tags(image_id):
@@ -89,8 +102,11 @@ output_tags()
 tag_name = input("download tag: ")
 print("----------------------------")
 current_ids = fetch_image_ids(tag_name)
-print(current_ids)
 tag_name = tag_name.replace(" ", "_")
+print(f"length of tag: {len(current_ids)}")
+
+exit()
+print(current_ids)
 if not os.path.exists(f"./images/{tag_name}"):
     os.makedirs(f"./images/{tag_name}")
 for id in current_ids:
