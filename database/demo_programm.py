@@ -31,6 +31,12 @@ WHERE image.id IN (
     (SELECT id FROM tag WHERE name='belly free')
 );
 
+# sfw filter
+SELECT DISTINCT image_id AS id FROM image_tag 
+WHERE tag_id=9 AND image_id NOT IN 
+(SELECT DISTINCT image_id FROM image_tag 
+WHERE tag_id=8);
+
 SELECT tag.name FROM tag 
 WHERE tag.id IN 
 (SELECT image_tag.tag_id FROM image_tag
