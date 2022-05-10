@@ -1,0 +1,53 @@
+<h2>?sfw=1</h2>
+<p>Optional. If set filters out all the nsfw images.</p>
+
+<hr>
+
+<h1>/api.php</h1>
+
+<p>This is just to support legacy programms. Dont use this.</p>
+
+<h2>?tag=tag_name</h2>
+<p>Returns all data to a random image from that tag in JSON.</p>
+
+<h2></h2>
+<p></p>
+
+<hr>
+
+<h1>get the image data</h1>
+
+<p>returns if the tag is specified, the data of a random image with this tag, if the image is specified the image data from this image. The Format is JSON.</p>
+
+<h2>?image_id=69</h2>
+<p>Specifies the image with the image id.</p>
+
+<h2>?tag_id=8</h2>
+<p>Specifies the tag. Rather fetch the tag id bevorehand and use it instead of the tag name, because of performance.</p>
+
+<h2>?tag_name=cute</h2>
+<p>Specifies the tag. Less performant than using tag_id.</p>
+
+
+<h2>/image.php</h2>
+<p>gets all image data</p>
+
+
+<h2>/image_data.php</h2>
+<p>gets all image data exept the tags</p>
+
+
+<h2>/image_tags.php</h2>
+<p>get all image tags</p>
+
+<hr>
+
+<h1>/tag</h1>
+
+<p>You cannot download all images of a tag. Returns all data of a tag in the JSON format.</p>
+
+<h2>?tag_name=cute</h2>
+<p>Specifies the tag name.</p>
+
+<h2>?tag_id=8</h2>
+<p>Specifies the tag id.</p>
