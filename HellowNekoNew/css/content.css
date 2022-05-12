@@ -1,0 +1,54 @@
+#content {
+height: 100%;
+width: 100%;
+}
+
+#img-container {
+	height: 100%;
+}
+
+#neko-img {
+	height: 100%;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.next {
+	display: none;
+	margin: 0px 10px 0px 10px;
+	padding: 10px;
+
+	border: 1px solid #fff;
+	width: 80px;
+	
+	background-color: rgba(35, 39, 42, 0.3);
+	color: #fff;
+	
+	border-radius: 5px;
+	outline: none;
+	
+	transition-duration: 0.2s;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.next:hover {
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.3), 0 17px 50px 0 rgba(0,0,0,0.19);
+	transition-duration: 0.1s;
+	background-color: rgba(35, 39, 42, 0.2);
+}
+
+.next:active {
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.3), 0 17px 50px 0 rgba(0,0,0,0.19);
+	border: 1px solid #ddd;
+	background-color: rgba(35, 39, 42, 0.1);
+}
+
+#search-input {
+	background-color: rgba(255, 255, 255, 0.5);
+	border: 2px #fff;
+
+	margin: auto;
+	padding: 8px;
+	width: 450px;
+}

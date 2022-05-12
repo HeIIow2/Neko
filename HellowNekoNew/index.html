@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <title>Neko</title>
+    <link rel="stylesheet" href="./css/basis.css">
+	<link rel="stylesheet" href="./css/content.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+<iframe id="download_iframe" style="display:none;"></iframe>
+<header>
+    <a href="https://ln.topdf.de/hellow2" id="home" target="_blank">
+        <span class="material-icons md-36">&#xe88a;</span>
+    </a>
+    <h1 id="headline">0842</h1>
+    <input id="search-input" onblur="search()" onkeydown="search(event)" list="tags" placeholder="cute">
+    <datalist id="tags">
+
+    </datalist>
+
+    <button class="next" onclick="previous()">prev</button>
+    <button class="next" onclick="search()">new</button>
+    
+    <!--<span class="material-icons md-36" onclick="download()">&#xf090;</span>-->
+
+    <!--
+	<button class="next" onclick="newCute()">new cute</button>
+	<button class="next" onclick="newLewd()">new lewd</button>-->
+</header>
+<div id="content">
+<div id="img-container">
+     <img src="https://ln.topdf.de/img/images/0842.png" alt="cute neko" id="neko-img">
+</div>
+</div>
+<div class="parallax-window"></div>
+
+</body>
+<script src="./data/table.json"></script>
+<script src="./js/showNeko.js"></script>
+</html>
