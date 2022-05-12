@@ -136,30 +136,25 @@ function get_img_data_by_id($img_id) {
 }
 
 
-if(isset($_GET['tag_id'])) 
+$sql = "SELECT DISTINCT tag.*,
+COUNT(tag.id) AS frequency
+FROM tag
+LEFT OUTER JOIN image_tag ON tag.id=image_tag.tag_id
+GROUP BY tag.id
+ORDER BY frequency DESC;";
+if(isset($_GET['frequency'])) 
 {
-	$tag_id = $conn->real_escape_string($_GET['tag_id']);
+	$sql = "SELECT * FROM tag;";
+}
+$result = select($sql);
+if($result == NULL) {not_found();}
 	
-	$sql = "SELECT * FROM tag WHERE id=" . $tag_id . ";";
-	$result = select($sql);
-	
-	$tags = $result -> fetch_assoc();
-	if($tags == NULL) {not_found();}
-	
-	echo json_encode($tags);
-	die();
+$tags = [];
+
+for ($i=0; $i<$result->num_rows; $i++)
+{
+	 array_push($tags, $result -> fetch_assoc());
 }
 
-if(isset($_GET['tag_name']))
-{
-	$tag_name = $conn->real_escape_string($_GET['tag_name']);
-	
-	$sql = "SELECT * FROM tag WHERE name='" . $tag_name . "';";
-	$result = select($sql);
-	
-	$tags = $result -> fetch_assoc();
-	if($tags == NULL) {not_found();}
-	
-	echo json_encode($tags);
-	die();
-}
+echo json_encode($tags);
+die();

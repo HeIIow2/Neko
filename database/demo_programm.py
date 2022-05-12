@@ -41,6 +41,13 @@ SELECT tag.name FROM tag
 WHERE tag.id IN 
 (SELECT image_tag.tag_id FROM image_tag
 WHERE image_tag.image_id=19660);
+
+SELECT DISTINCT tag.*,
+COUNT(tag.id) AS frequency
+FROM tag
+LEFT OUTER JOIN image_tag ON tag.id=image_tag.tag_id
+GROUP BY tag.id
+ORDER BY frequency DESC;
 """
 
 
