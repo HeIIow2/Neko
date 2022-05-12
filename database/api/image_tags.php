@@ -1,8 +1,10 @@
 <?php
-$servername = "localhost";
-$username = "Hellow2";
-$password = "1234";
-$dbname = "neko";
+$credentials = json_decode(file_get_contents("private/database.json"));
+
+$servername = $credentials -> servername;
+$username = $credentials -> username;
+$password = $credentials -> password;
+$dbname = $credentials -> dbname;
 
 // Create connection to db
 $conn = new mysqli($servername, $username, $password, $dbname);
