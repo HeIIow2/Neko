@@ -15,7 +15,7 @@ let history = [];
 
 
 
-let tagsList;
+let tagsList = null;
 let tag_map = {};
 
 const request = new XMLHttpRequest();
@@ -23,8 +23,18 @@ const url = 'https://ln.topdf.de/HellowNekoNew/api/all_tag.php';
 request.open("GET", url);
 request.send();
 
+
 request.onload = (e) => {
     tagsList = JSON.parse(request.response);
+	console.log(tagsList);
+	
+	let htmlStr = "";
+    for(let i = 0; i < tagsList.length; i++) {
+        tag_map[tagsList[i]['name']] = tagsList[i];
+        htmlStr += `<option value="${tagsList[i]['name']}">`;
+    }
+
+    document.getElementById('tags').innerHTML = htmlStr;
 }
 
 
@@ -33,15 +43,8 @@ window.addEventListener('load', function () {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].style.display = "inline";
     }
-
-    let htmlStr = "";
-    for(let i = 0; i < tagsList.length; i++) {
-        tag_map[tagsList[i]['name']] = tagsList[i];
-        htmlStr += `<option value="${tagsList[i]['name']}">`;
-    }
-
-    document.getElementById('tags').innerHTML = htmlStr;
 });
+
 
 document.addEventListener('keyup', onKeyPress)
 function onKeyPress(e) {
