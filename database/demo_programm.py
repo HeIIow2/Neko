@@ -14,6 +14,8 @@ neko_db = mysql.connector.connect(
 )
 cursor = neko_db.cursor()
 
+
+
 """
 SELECT 
 	(SELECT tag.name FROM tag WHERE tag.id=image_tag.tag_id) AS tag, 
