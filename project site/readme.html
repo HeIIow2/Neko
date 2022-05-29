@@ -1,4 +1,4 @@
-<image id="neko-img" class="third"></image>
+<image id="neko-img" class="third" style="margin-top: 20px"></image>
 <script>
     // 2 = cute
     const endpoint = "https://ln.topdf.de/HellowNekoNew/api/image.php?tag_id=23&sfw=1";
@@ -6,7 +6,9 @@
     fetch(endpoint)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("neko-img").src = data.url;
+            let image = document.getElementById("neko-img");
+            image.src = data.url;
+            image.title = "API example\ntags:\n" + data.tags.join("\n");
         });
 </script>
 <p>
@@ -21,8 +23,9 @@
     In the March 2020, I started migrating to a proper SQL database. With it I made an legacy api with the database, with exactly the same Endpoint as the old API. Then I made some new Endpoints, wrote an Documentation, and patched the old Programs I still remember.
 </p>
 <ul>
-    <li><a href="https://ln.topdf.de/HellowNekoNew/" class="link-primary" target="_blank">Web App V2</a></li>
-    <li><a href="https://ln.topdf.de/HellowNeko/home.html" class="link-primary" target="_blank">Web App V1</a></li>
-    <li><a href="https://ln.topdf.de/HellowNekoNew/api" class="link-primary" target="_blank">rest API</a></li>
-    <li><a href="https://ln.topdf.de/Neko_portable.zip" class="link-primary" target="_blank">Desktop App</a></li>
+    <li><a href="https://github.com/HeIIow2/Neko" class="link-primary">GitHub</a></li>
+    <li><a href="https://ln.topdf.de/HellowNekoNew/" class="link-primary">Web App V2</a></li>
+    <li><a href="https://ln.topdf.de/HellowNeko/home.html" class="link-primary">Web App V1</a></li>
+    <li><a href="https://ln.topdf.de/HellowNekoNew/api" class="link-primary">rest API</a></li>
+    <li><a href="https://ln.topdf.de/Neko_portable.zip" class="link-primary">Desktop App</a></li>
 </ul>

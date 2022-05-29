@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Hellow-Neko Project-Site</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://ln.topdf.de/web_framework/css/styles.css">
+    <script src="https://ln.topdf.de/web_framework/js/marked.min.js"></script>
+    <script type="module" src="https://ln.topdf.de/web_framework/js/index.js"></script>
+</head>
+
+<body>
+<header>
+    <h1>Hellow2</h1>
+    <a href="https://github.com/HeIIow2/Neko">GitHub</a>
+    <a href="https://ln.topdf.de/HellowNekoNew/">Web-App</a>
+
+    <button class="push theme-button">Theme</button>
+</header>
+
+<div class="container">
+    <div class="textbox">
+        <h1>Was ist <a href="https://ln.topdf.de/HellowNekoNew/">Hellow Neko?</a></h1>
+
+        <p>
+            Hellow Neko ist ein Herzensprojekt und mein größtes und ältestes Projekt. Es get darum,
+            Bilder von Anime-Catgirls, sowohl SFW als auch NSFW, zu sammeln, zu labeln und anzuzeigen.
+            Meine neusten Pläne sind eine Suchmaschine für Catgirls zu erstellen.
+        </p>
+
+        <image id="neko-img" class="third"></image>
+        <script>
+            // 2 = cute
+            const endpoint = "https://ln.topdf.de/HellowNekoNew/api/image.php?tag_id=23&sfw=1";
+
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    let image = document.getElementById("neko-img");
+                    image.src = data.url;
+                    image.title = "API example\ntags:\n" + data.tags.join("\n");
+                });
+        </script>
+
+        <h2>Bis jetzt umfasst Hellow Neko diese Features:</h2>
+        <ul>
+            <li>Eine <a target="_blank" href="https://ln.topdf.de/HellowNekoNew/api/">rest API</a>. Diese ist dokumentiert und leicht zu bedienen. Mit dieser habe ich beispielsweise das Bild rechts/oben anzeigen lassen, das sich bei jedem besuch der Seite ändert.</li>
+            <li>Eine <a target="_blank" href="https://ln.topdf.de/HellowNekoNew/">Webanwendung</a> in der man nach den Verfügbaren tags suchen kann, und dann durch die Catgirl-Bilder stöbern kann.</li>
+        </ul>
+
+        <h2>Tech-Stack</h2>
+        <ul>
+            <li>Für das Frontend der Webanwendung nutze ich Vanilla-JS, HTML und css</li>
+            <li>Für das Backend und der Verbindung mit der Datenbank nutze ich php (Nicht meine Wahl ich habe nur dafür den Server kostenlos bekommen).</li>
+            <li>Für die Datenbank nutze ich MySQL.</li>
+            <li>Für das Web-scraping und labeling nutze ich python.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="container">
+    <div class="textbox">
+        <h1>Aufbau.</h1>
+
+        <p>
+            Im grunde habe ich den groben Aufbau von Hellow Neko schon bei dem Tech-Stack erläutert.
+            Jedoch ist es sinnvoll noch einmal auf die Datenbank und auf die API einzugehen.
+        </p>
+
+        <h2>Datenbank</h2>
+        <p>
+            In dieser Datenbank gibt es 3 Tabellen:
+        </p>
+
+        <ul>
+            <li>
+                <code>image</code>:
+                In dieser Tabelle werden alle daten für die Bilder gespeichert. Dazu gehört die <code>id</code>,
+                die url, ein boolean, ob dieses Bild SFW oder NSFW ist, und wenn vorhanden den Text auf dem
+                Bild.
+            </li>
+            <li>
+                <code>tag</code>:
+                In dieser Tabelle werden alle Tags gespeichert. Dazu gehört die <code>id</code>,
+                der Name des Tags geplant ist auch eine Beschreibung des Tags.
+            </li>
+            <li>
+                <code>image_tag</code>:
+                In dieser Tabelle werden alle Verbindungen zwischen Bildern und Tags gespeichert. Dazu gehört die <code>id</code>,
+                die <code>image_id</code> und die <code>tag_id</code>. Dies ist eine many to many Verbindung bzw. n-m Verbindung.
+            </li>
+        </ul>
+
+        <h2>API</h2>
+        <p>
+            Die API hat eine base-url: <a target="_blank" href="https://ln.topdf.de/HellowNekoNew/api/">https://ln.topdf.de/HellowNekoNew/api/</a>.
+            Von dieser aus gibt es verschiedene Endpoints. Es gibt die Endpoints bei denen man Informationen zu
+            Bildern und die bei denen man informationen über Tags bekommen kann.
+        </p>
+
+        <h3>Image Data</h3>
+        <p>Es gibt verschiedene url parameter, die man an Endpoints für Bilder dranhängen kann:</p>
+        <ul>
+            <li><code>?sfw=1</code>: Hier kann man alle bilder die NSFW sind herausfiltern.</li>
+            <li><code>?image_id=69</code>: Hier gibt man die id des Bildes an, von den man Daten will.</li>
+            <li><code>?tag_id=8</code>: Hier gibt man die id des tags an, von den man Daten eines zufälligen Bildes will.</li>
+            <li><code>?tag_name=cute</code>: Hier gibt man den Namen des tags an, von den man Daten eines zufälligen Bildes will. Dies sollte aber im großen Stil schlechter sein, als die tag_id anzugeben.</li>
+        </ul>
+        <p>Die verschiedenen Endpoints:</p>
+        <ul>
+            <li><code>/image.php</code>: Hiermit bekommt man alle Daten eines Bildes.</li>
+            <li><code>/image_data.php</code>: Hiermit bekommt man alle Daten eines Bildes außer die Tags (dies könnte aus performance Gründen hilfreich sein).</li>
+            <li><code>/image_data.php</code>: Hiermit bekommt man nur die Tags eines Bildes (dies ist nur hilfreich, wenn man vorher die tags nicht bekommen hat).</li>
+        </ul>
+
+        <h3>Tag Data</h3>
+        <p>Eine wichtige nebennotiz ist, das man nicht alle Bilder von einem Tag auf einmal herunterladen kann.</p>
+        <p>url parameter:</p>
+        <ul>
+            <li><code>?tag_name=cute</code>: Beschreibt den tag Namen, von dem man Daten will.</li>
+            <li><code>?tag_id=8</code>: Beschreibt die Tag id, von der man Daten will</li>
+        </ul>
+        <p>Endpoints:</p>
+        <ul>
+            <li><code>/tag.php</code>: Gibt die Daten eines spezifizierten Bildes zurück.</li>
+            <li><code>/all_tag.php</code>: Gibt die Daten von allen Tags zurück.</li>
+        </ul>
+
+        <p>
+            Dies waren die meisten Funktionen der API. Ein paar Details habe ich ausgelassen, dafür kann man sich
+            aber auch gerne die <a target="_blank" href="https://ln.topdf.de/HellowNekoNew/api/">Dokumentation</a> ansehen.
+        </p>
+
+
+    </div>
+</div>
+
+
+<div id="copyright">© Lars Noack</div>
+
+</body>
+</html>
