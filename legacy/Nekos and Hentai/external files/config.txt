@@ -1,0 +1,5 @@
+cute path = 
+lewd path = 
+end_message = 
+NSFW = 
+paralax = 

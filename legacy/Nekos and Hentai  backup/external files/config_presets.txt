@@ -1,0 +1,5 @@
+%APPDATA%\Neko\Neko URL cute
+%APPDATA%\Neko\Neko URL lewd
+False
+True
+0.1
