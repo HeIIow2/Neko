@@ -25,7 +25,7 @@ class Config:
         with open(self.path, "r") as f:
             self.config = json.load(f)
 
-        self.app_title = self.config["app-title"]
+        self.window_title = self.config["window-title"]
         if self.config["window-maximized"]:
             self.window_state = "zoomed"
         else:
