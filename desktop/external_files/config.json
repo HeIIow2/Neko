@@ -1,5 +1,9 @@
 {
   "window-title": "NEKOS!!!",
   "window-maximized": true,
-  "window-dimensions": [800, 600]
+  "window-dimensions": [800, 600],
+
+  "quarry": "cute",
+  "sfw": true,
+  "random": true
 }

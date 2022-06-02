@@ -3,6 +3,7 @@ import tkinter as tk
 import files
 
 config = files.Config()
+print(config)
 
 if __name__ == '__main__':
     root = tk.Tk()
