@@ -34,13 +34,17 @@ class SidePanel:
 
         self.random_var = tk.IntVar()
         self.random_var.set(config.random_image)
-        self.sfw_checkbox = tk.Checkbutton(self.master, variable=self.random_var, command=self.toggle_random, text="shuffle Images")
-        self.sfw_checkbox.grid(row=3, column=0, columnspan=4, sticky="nsw")
+        self.random_checkbox = tk.Checkbutton(self.master, variable=self.random_var, command=self.toggle_random, text="shuffle Images")
+        self.random_checkbox.grid(row=3, column=0, columnspan=4, sticky="nsw")
+        for keybinding in config.get_button_keybindings("random"):
+            self.root_ref.bind(keybinding, self.toggle_random)
 
         self.sfw_var = tk.IntVar()
         self.sfw_var.set(config.sfw_filter)
         self.sfw_checkbox = tk.Checkbutton(self.master, variable=self.sfw_var, command=self.toggle_sfw, text="Only SFW")
         self.sfw_checkbox.grid(row=4, column=0, columnspan=4, sticky="nsw")
+        for keybinding in config.get_button_keybindings("sfw"):
+            self.root_ref.bind(keybinding, self.toggle_sfw)
 
         self.like_var = tk.IntVar()
         self.like_checkbox = tk.Checkbutton(self.master, variable=self.like_var, command=self.toggle_like, text="Like")
@@ -51,7 +55,7 @@ class SidePanel:
             "prev": self.prev_button,
             "neko": self.browse_neko_button,
             "hentai": self.browse_hentai_button,
-            "random": self.sfw_checkbox,
+            "random": self.random_checkbox,
             "sfw": self.sfw_checkbox,
             "like": self.like_checkbox
         }
@@ -82,9 +86,13 @@ class SidePanel:
         print("Browse Hentai")
 
     def toggle_random(self, event=None):
+        if event is not None:
+            self.random_var.set(not self.random_var.get())
         self.config.random_image = self.random_var.get()
 
     def toggle_sfw(self, event=None):
+        if event is not None:
+            self.sfw_var.set(not self.sfw_var.get())
         self.config.sfw_filter = self.sfw_var.get()
 
     def toggle_like(self, event=None):

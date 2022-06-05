@@ -119,6 +119,9 @@ class Config:
     def get_button_keybindings(self, button: str):
         return self.get_raw_button_properties(button)[f"keybindings"]
 
+    def get_api_url(self):
+        return self.config["api-url"]
+
 
     def save_config(self):
         with open(self.path, "w") as f:
@@ -134,3 +137,5 @@ class Config:
     random_image = property(fget=get_random_image, fset=set_random_image)
     neko_focus = property(fget=get_neko_focus, fset=set_neko_focus)
     hentai_focus = property(fget=get_hentai_focus, fset=set_hentai_focus)
+
+    api_url = property(fget=get_api_url)

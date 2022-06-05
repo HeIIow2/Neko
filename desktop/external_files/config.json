@@ -9,7 +9,7 @@
     "random": true,
     "neko-quarry": "cute",
     "hentai-quarry": "177013",
-    "focus": "neko",
+    "focus": "hentai",
     "button-properties": {
         "next": {
             "hentai": {
@@ -41,6 +41,7 @@
         },
         "random": {
             "hentai": {
+                "text": "shuffling Hentai is dumb",
                 "state": "disabled"
             },
             "neko": {
@@ -66,5 +67,7 @@
                 "g"
             ]
         }
-    }
+    },
+
+    "api-url": "https://ln.topdf.de/HellowNekoNew/api/"
 }
