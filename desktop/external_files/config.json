@@ -1,1 +1,32 @@
-{"window-title": "NEKOS!!!", "window-maximized": true, "window-dimensions": [800, 600], "quarry": "cute", "sfw": true, "random": true}
+{
+    "window-title": "NEKOS!!!",
+    "window-maximized": true,
+    "window-dimensions": [
+        800,
+        600
+    ],
+    "sfw": true,
+    "random": true,
+    "neko-quarry": "belly free",
+    "hentai-quarry": "177013",
+    "focus": "neko",
+
+    "button-properties": {
+        "next": {
+            "neko-label": "Next Neko",
+            "hentai-label": "Next Page",
+            "keybindings": [
+                "n",
+                "d"
+            ]
+        },
+        "prev": {
+            "neko-label": "Previous Neko",
+            "hentai-label": "Previous Page",
+            "keybindings": [
+                "p",
+                "a"
+            ]
+        }
+    }
+}

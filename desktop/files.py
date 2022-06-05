@@ -65,11 +65,17 @@ class Config:
     def set_window_geometry(self, geometry):
         self.config["window-dimensions"] = [int(i) for i in geometry.split("x")]
 
-    def get_quarry(self):
-        return self.config["quarry"]
+    def get_neko_quarry(self):
+        return self.config["neko-quarry"]
 
-    def set_quarry(self, quarry):
-        self.config["quarry"] = quarry
+    def set_neko_quarry(self, quarry):
+        self.config["neko-quarry"] = quarry
+
+    def get_hentai_quarry(self):
+        return self.config["hentai-quarry"]
+
+    def set_hentai_quarry(self, quarry):
+        self.config["hentai-quarry"] = quarry
 
     def get_sfw_filter(self):
         return self.config["sfw"]
@@ -81,17 +87,49 @@ class Config:
     def get_random_image(self):
         return self.config["random"]
 
-    def set_random_image(self, random):
-        self.config["random"] = random
+    def set_random_image(self, random: bool):
+        print(f"set random image to {random}")
+        self.config["random"] = bool(random)
+
+    def get_neko_focus(self):
+        return self.config["focus"] == "neko"
+
+    def set_neko_focus(self, focus: bool):
+        print(f"set neko focus to {focus}")
+        self.config["focus"] = "neko" if focus else "hentai"
+
+    def get_hentai_focus(self):
+        return self.config["focus"] == "hentai"
+
+    def set_hentai_focus(self, focus: bool):
+        print(f"set hentai focus to {focus}")
+        self.config["focus"] = "hentai" if focus else "neko"
+
+    def get_selector(self):
+        return self.config["focus"]
+
+    def set_selector(self, selector):
+        self.config["focus"] = selector
+
+    def get_button_properties(self):
+        return self.config["button-properties"]
+
+    def set_button_properties(self, properties):
+        self.config["button-properties"] = properties
 
     def save_config(self):
         with open(self.path, "w") as f:
-            json.dump(self.config, f)
+            json.dump(self.config, f, indent=4)
 
     window_title = property(fget=get_window_title, fset=set_window_tile)
     window_state = property(fget=get_window_state, fset=set_window_state)
     window_geometry = property(fget=get_window_geometry, fset=set_window_geometry)
 
-    quarry = property(fget=get_quarry, fset=set_quarry)
+    neko_quarry = property(fget=get_neko_quarry, fset=set_neko_quarry)
+    hentai_quarry = property(fget=get_hentai_quarry, fset=set_hentai_quarry)
     sfw_filter = property(fget=get_sfw_filter, fset=set_sfw_filter)
     random_image = property(fget=get_random_image, fset=set_random_image)
+    neko_focus = property(fget=get_neko_focus, fset=set_neko_focus)
+    hentai_focus = property(fget=get_hentai_focus, fset=set_hentai_focus)
+    selector = property(fget=get_selector, fset=set_selector)
+    button_properties = property(fget=get_button_properties, fset=set_button_properties)
