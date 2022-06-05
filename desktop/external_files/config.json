@@ -7,25 +7,63 @@
     ],
     "sfw": true,
     "random": true,
-    "neko-quarry": "belly free",
+    "neko-quarry": "cute",
     "hentai-quarry": "177013",
     "focus": "neko",
-
     "button-properties": {
         "next": {
-            "neko-label": "Next Neko",
-            "hentai-label": "Next Page",
+            "hentai": {
+                "text": "Previous Page",
+                "state": "normal"
+            },
+            "neko": {
+                "text": "Previous Neko",
+                "state": "normal"
+            },
             "keybindings": [
                 "n",
                 "d"
             ]
         },
         "prev": {
-            "neko-label": "Previous Neko",
-            "hentai-label": "Previous Page",
+            "hentai": {
+                "text": "Previous Page",
+                "state": "normal"
+            },
+            "neko": {
+                "text": "Previous Neko",
+                "state": "normal"
+            },
             "keybindings": [
                 "p",
                 "a"
+            ]
+        },
+        "random": {
+            "hentai": {
+                "state": "disabled"
+            },
+            "neko": {
+                "text": "Random Neko",
+                "state": "normal"
+            },
+            "keybindings": [
+                "r",
+                "f"
+            ]
+        },
+        "sfw": {
+            "hentai": {
+                "text": "hentai is always NSFW",
+                "state": "disabled"
+            },
+            "neko": {
+                "text": "filter NSFW",
+                "state": "normal"
+            },
+            "keybindings": [
+                "s",
+                "g"
             ]
         }
     }

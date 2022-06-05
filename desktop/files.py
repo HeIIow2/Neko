@@ -105,17 +105,20 @@ class Config:
         print(f"set hentai focus to {focus}")
         self.config["focus"] = "hentai" if focus else "neko"
 
-    def get_selector(self):
+    def get_raw_button_properties(self, button: str):
+        if button not in self.config["button-properties"]:
+            return {"hentai": {}, "neko": {}, "keybindings": []}
+        return self.config["button-properties"][button]
+
+    def get_focus(self):
         return self.config["focus"]
 
-    def set_selector(self, selector):
-        self.config["focus"] = selector
+    def get_button_properties(self, button: str):
+        return self.get_raw_button_properties(button)[self.get_focus()]
 
-    def get_button_properties(self):
-        return self.config["button-properties"]
+    def get_button_keybindings(self, button: str):
+        return self.get_raw_button_properties(button)[f"keybindings"]
 
-    def set_button_properties(self, properties):
-        self.config["button-properties"] = properties
 
     def save_config(self):
         with open(self.path, "w") as f:
@@ -131,5 +134,3 @@ class Config:
     random_image = property(fget=get_random_image, fset=set_random_image)
     neko_focus = property(fget=get_neko_focus, fset=set_neko_focus)
     hentai_focus = property(fget=get_hentai_focus, fset=set_hentai_focus)
-    selector = property(fget=get_selector, fset=set_selector)
-    button_properties = property(fget=get_button_properties, fset=set_button_properties)

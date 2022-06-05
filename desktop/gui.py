@@ -3,15 +3,20 @@ import tkinter as tk
 import files
 
 class SidePanel:
-    def __init__(self, master, config: files.Config):
+    def __init__(self, root_ref, master, config: files.Config):
+        self.root_ref = root_ref
         self.master = master
         self.config = config
 
         self.prev_button = tk.Button(self.master, text="Previous", command=self.previous)
         self.prev_button.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        for keybinding in config.get_button_keybindings("prev"):
+            self.root_ref.bind(keybinding, self.previous)
 
         self.next_button = tk.Button(self.master, text="Next", command=self.next)
         self.next_button.grid(row=0, column=2, columnspan=2, sticky="nsew")
+        for keybinding in config.get_button_keybindings("next"):
+            self.root_ref.bind(keybinding, self.next)
 
         self.browse_neko_button = tk.Button(self.master, text="Neko", command=self.browse_neko)
         self.browse_neko_button.grid(row=1, column=0, sticky="nsew")
@@ -44,39 +49,45 @@ class SidePanel:
         self.button_map = {
             "next": self.next_button,
             "prev": self.prev_button,
+            "neko": self.browse_neko_button,
+            "hentai": self.browse_hentai_button,
+            "random": self.sfw_checkbox,
+            "sfw": self.sfw_checkbox,
+            "like": self.like_checkbox
         }
 
-    def next(self):
+        self.update_buttons()
+
+    def next(self, event=None):
         print("Next")
 
-    def previous(self):
+    def previous(self, event=None):
         print("Previous")
 
     def update_buttons(self):
         for key, button in self.button_map.items():
-            button.config(text=self.config.button_properties[key][f"{self.config.selector}-label"])
+            for property, value in self.config.get_button_properties(key).items():
+                button.config(**{property: value})
 
-
-    def browse_neko(self):
+    def browse_neko(self, event=None):
         self.config.neko_focus = True
-        print(self.neko_query_var.get())
         self.config.neko_quarry = self.neko_query_var.get()
         self.update_buttons()
         print("Browse Neko")
 
-    def browse_hentai(self):
+    def browse_hentai(self, event=None):
         self.config.hentai_focus = True
         self.config.hentai_quarry = self.hentai_query_var.get()
         self.update_buttons()
         print("Browse Hentai")
 
-    def toggle_random(self):
+    def toggle_random(self, event=None):
         self.config.random_image = self.random_var.get()
 
-    def toggle_sfw(self):
+    def toggle_sfw(self, event=None):
         self.config.sfw_filter = self.sfw_var.get()
 
-    def toggle_like(self):
+    def toggle_like(self, event=None):
         print("Toggle like")
 
 class Gui:
@@ -93,7 +104,7 @@ class Gui:
 
         self.side_panel_frame = tk.Frame(self.master)
         self.side_panel_frame.grid(row=0, column=1, sticky="nse")
-        self.side_panel = SidePanel(self.side_panel_frame, self.config)
+        self.side_panel = SidePanel(self.master, self.side_panel_frame, self.config)
 
     def on_closing(self):
         self.master.destroy()
