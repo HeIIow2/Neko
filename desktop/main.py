@@ -1,14 +1,9 @@
-import tkinter as tk
-
 import files
+import gui
 
 config = files.Config()
-print(config)
+
+gui = gui.Gui(config)
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.title(config.window_title)
-    root.geometry(config.window_geometry)
-    root.state(config.window_state)
-
-    root.mainloop()
+    gui.root.mainloop()

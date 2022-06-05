@@ -30,6 +30,10 @@ class Config:
         for key, value in self.config.items():
             print(f"{key}: {value}")
 
+    def __del__(self):
+        print("Saving config...")
+        self.save_config()
+
     def download_config(self):
         r = requests.get(CONFIG_URL)
         if r.status_code != 200:
@@ -43,7 +47,6 @@ class Config:
 
     def set_window_tile(self, title):
         self.config["window-title"] = title
-        self.save_config()
 
     def get_window_state(self):
         if self.config["window-maximized"]:
@@ -55,35 +58,31 @@ class Config:
             self.config["window-maximized"] = True
         else:
             self.config["window-maximized"] = False
-        self.save_config()
 
     def get_window_geometry(self):
         return f"{self.config['window-dimensions'][0]}x{self.config['window-dimensions'][1]}"
 
     def set_window_geometry(self, geometry):
         self.config["window-dimensions"] = [int(i) for i in geometry.split("x")]
-        self.save_config()
 
     def get_quarry(self):
         return self.config["quarry"]
 
     def set_quarry(self, quarry):
         self.config["quarry"] = quarry
-        self.save_config()
 
     def get_sfw_filter(self):
-        return self.config["sfw-filter"]
+        return self.config["sfw"]
 
-    def set_sfw_filter(self, sfw_filter):
-        self.config["sfw-filter"] = sfw_filter
-        self.save_config()
+    def set_sfw_filter(self, sfw_filter: bool):
+        print(f"set sfw filter to {sfw_filter}")
+        self.config["sfw"] = bool(sfw_filter)
 
     def get_random_image(self):
         return self.config["random"]
 
     def set_random_image(self, random):
         self.config["random"] = random
-        self.save_config()
 
     def save_config(self):
         with open(self.path, "w") as f:
