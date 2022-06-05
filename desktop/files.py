@@ -30,10 +30,6 @@ class Config:
         for key, value in self.config.items():
             print(f"{key}: {value}")
 
-    def __del__(self):
-        print("Saving config...")
-        self.save_config()
-
     def download_config(self):
         r = requests.get(CONFIG_URL)
         if r.status_code != 200:
@@ -122,9 +118,14 @@ class Config:
     def get_api_url(self):
         return self.config["api-url"]
 
+    def get_padding(self):
+        return self.config["padding"]
+
+    def get_caching_count(self):
+        return self.config["caching-count"]
 
     def save_config(self):
-        with open(self.path, "w") as f:
+        with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.config, f, indent=4)
 
     window_title = property(fget=get_window_title, fset=set_window_tile)
@@ -137,5 +138,7 @@ class Config:
     random_image = property(fget=get_random_image, fset=set_random_image)
     neko_focus = property(fget=get_neko_focus, fset=set_neko_focus)
     hentai_focus = property(fget=get_hentai_focus, fset=set_hentai_focus)
+    padding = property(fget=get_padding)
 
     api_url = property(fget=get_api_url)
+    caching_count = property(fget=get_caching_count)

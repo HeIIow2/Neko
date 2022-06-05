@@ -5,11 +5,12 @@
         800,
         600
     ],
-    "sfw": true,
+    "sfw": false,
     "random": true,
-    "neko-quarry": "cute",
+    "neko-quarry": "bdsm",
     "hentai-quarry": "177013",
-    "focus": "hentai",
+    "focus": "neko",
+    "padding": 5,
     "button-properties": {
         "next": {
             "hentai": {
@@ -68,6 +69,6 @@
             ]
         }
     },
-
-    "api-url": "https://ln.topdf.de/HellowNekoNew/api/"
+    "api-url": "https://ln.topdf.de/HellowNekoNew/api/",
+    "caching-count": 10
 }
