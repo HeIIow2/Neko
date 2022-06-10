@@ -1,0 +1,2 @@
+pyinstaller --onefile --distpath "builds/debuging" --workpath "builds/temp-dir" -n HellowNeko-debug.exe main.py 
+pyinstaller --onefile --noconsole --distpath "builds/HellowNeko" --workpath "builds/temp-dir" -n HellowNeko.exe main.py 

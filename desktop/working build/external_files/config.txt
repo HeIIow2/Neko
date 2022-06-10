@@ -1,5 +1,0 @@
-new neko keys = <Right>, <space>, d
-prev neko keys = <Left>, a
-like_keys = l
-activate_blacklist = False
-blacklist = lewd, feet, tiffy, bdsm

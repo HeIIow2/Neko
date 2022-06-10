@@ -1,0 +1,78 @@
+{
+    "window-title": "NEKOS!!!",
+    "window-maximized": true,
+    "window-dimensions": [
+        800,
+        600
+    ],
+    "sfw": false,
+    "random": true,
+    "neko-quarry": "revealing",
+    "hentai-quarry": "177013",
+    "focus": "neko",
+    "padding": 5,
+    "button-properties": {
+        "next": {
+            "hentai": {
+                "text": "Next Page",
+                "state": "normal"
+            },
+            "neko": {
+                "text": "New Neko",
+                "state": "normal"
+            },
+            "keybindings": [
+                "n",
+                "d",
+                "<Right>",
+                "<space>"
+            ]
+        },
+        "prev": {
+            "hentai": {
+                "text": "Previous Page",
+                "state": "normal"
+            },
+            "neko": {
+                "text": "Previous Neko",
+                "state": "normal"
+            },
+            "keybindings": [
+                "p",
+                "a",
+                "<Left>"
+            ]
+        },
+        "random": {
+            "hentai": {
+                "text": "shuffling Hentai is dumb",
+                "state": "disabled"
+            },
+            "neko": {
+                "text": "Random Neko",
+                "state": "normal"
+            },
+            "keybindings": [
+                "r",
+                "f"
+            ]
+        },
+        "sfw": {
+            "hentai": {
+                "text": "hentai is always NSFW",
+                "state": "disabled"
+            },
+            "neko": {
+                "text": "filter NSFW",
+                "state": "normal"
+            },
+            "keybindings": [
+                "s",
+                "g"
+            ]
+        }
+    },
+    "api-url": "https://ln.topdf.de/HellowNekoNew/api/",
+    "caching-count": 10,
+    "history-count": 10
+}
