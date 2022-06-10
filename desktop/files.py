@@ -15,8 +15,33 @@ if not os.path.exists(FILE_PATH):
 if not os.path.exists(TEMP_PATH):
     raise Exception("Temp path does not exist")
 
-class Config:
+def save_temporary(img, name):
+    img.save(os.path.join(TEMP_PATH, name))
+    return os.path.join(TEMP_PATH, name)
 
+class Options:
+    def __init__(self, neko: bool, hentai: bool, sfw: bool, random: bool, neko_tag: int = None,
+                 neko_id: int = None, hentai_id: int = None):
+        self.neko = neko
+        self.hentai = hentai
+        self.sfw = sfw
+        self.random = random
+
+        self.neko_tag = neko_tag
+        self.neko_id = neko_id
+
+        self.hentai_id = hentai_id
+
+    def __eq__(self, other):
+        if not isinstance(other, Options):
+            return False
+
+        return self.neko == other.neko and self.hentai == other.hentai and self.sfw == other.sfw and \
+               self.random == other.random and self.neko_tag == other.neko_tag and self.neko_id == other.neko_id and \
+                self.hentai_id == other.hentai_id
+
+
+class Config:
     def __init__(self):
         self.path = os.path.join(FILE_PATH, CONFIG_FILE)
         if not os.path.exists(self.path):
@@ -124,9 +149,32 @@ class Config:
     def get_caching_count(self):
         return self.config["caching-count"]
 
+    def get_history_count(self):
+        return self.config["history-count"]
+
     def save_config(self):
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.config, f, indent=4)
+
+    def get_options(self, neko_tags: dict):
+        neko = self.get_neko_focus()
+        hentai = self.get_hentai_focus()
+
+        neko_id = None
+        neko_tag = None
+
+        hentai_id = None
+
+        if neko:
+            if self.neko_quarry.isdigit():
+                neko_id = int(self.neko_quarry)
+            else:
+                if self.neko_quarry in neko_tags:
+                    neko_tag = neko_tags[self.neko_quarry][0]
+                else:
+                    return None
+
+        return Options(neko, hentai, self.sfw_filter, self.random_image, neko_tag, neko_id, hentai_id)
 
     window_title = property(fget=get_window_title, fset=set_window_tile)
     window_state = property(fget=get_window_state, fset=set_window_state)
@@ -142,3 +190,4 @@ class Config:
 
     api_url = property(fget=get_api_url)
     caching_count = property(fget=get_caching_count)
+    history_count = property(fget=get_history_count)

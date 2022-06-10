@@ -7,23 +7,25 @@
     ],
     "sfw": false,
     "random": true,
-    "neko-quarry": "bdsm",
+    "neko-quarry": "revealing",
     "hentai-quarry": "177013",
     "focus": "neko",
     "padding": 5,
     "button-properties": {
         "next": {
             "hentai": {
-                "text": "Previous Page",
+                "text": "Next Page",
                 "state": "normal"
             },
             "neko": {
-                "text": "Previous Neko",
+                "text": "New Neko",
                 "state": "normal"
             },
             "keybindings": [
                 "n",
-                "d"
+                "d",
+                "<Right>",
+                "<space>"
             ]
         },
         "prev": {
@@ -37,7 +39,8 @@
             },
             "keybindings": [
                 "p",
-                "a"
+                "a",
+                "<Left>"
             ]
         },
         "random": {
@@ -70,5 +73,6 @@
         }
     },
     "api-url": "https://ln.topdf.de/HellowNekoNew/api/",
-    "caching-count": 10
+    "caching-count": 10,
+    "history-count": 10
 }
