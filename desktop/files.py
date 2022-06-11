@@ -20,25 +20,18 @@ def save_temporary(img, name):
     return os.path.join(TEMP_PATH, name)
 
 class Options:
-    def __init__(self, neko: bool, hentai: bool, sfw: bool, random: bool, neko_tag: int = None,
-                 neko_id: int = None, hentai_id: int = None):
-        self.neko = neko
-        self.hentai = hentai
+    def __init__(self, source: int, sfw: bool, random: bool, query: str):
+        self.source = source
         self.sfw = sfw
         self.random = random
 
-        self.neko_tag = neko_tag
-        self.neko_id = neko_id
-
-        self.hentai_id = hentai_id
+        self.query = query
 
     def __eq__(self, other):
         if not isinstance(other, Options):
             return False
 
-        return self.neko == other.neko and self.hentai == other.hentai and self.sfw == other.sfw and \
-               self.random == other.random and self.neko_tag == other.neko_tag and self.neko_id == other.neko_id and \
-                self.hentai_id == other.hentai_id
+        return self.source == other.source and self.sfw == other.sfw and self.random == other.random and self.query == other.query
 
 
 class Config:
@@ -63,6 +56,12 @@ class Config:
         with open(self.path, "w") as f:
             f.write(r.text)
 
+    def get_show_messagebox(self):
+        return self.config["show-messagebox"]
+
+    def set_show_messagebox(self, show: bool):
+        self.config["show-messagebox"] = bool(show)
+
     def get_window_title(self):
         return self.config["window-title"]
 
@@ -86,17 +85,11 @@ class Config:
     def set_window_geometry(self, geometry):
         self.config["window-dimensions"] = [int(i) for i in geometry.split("x")]
 
-    def get_neko_quarry(self):
-        return self.config["neko-quarry"]
+    def get_quarry(self):
+        return self.config["quarry"]
 
-    def set_neko_quarry(self, quarry):
-        self.config["neko-quarry"] = quarry
-
-    def get_hentai_quarry(self):
-        return self.config["hentai-quarry"]
-
-    def set_hentai_quarry(self, quarry):
-        self.config["hentai-quarry"] = quarry
+    def set_quarry(self, quarry):
+        self.config["quarry"] = quarry
 
     def get_sfw_filter(self):
         return self.config["sfw"]
@@ -112,36 +105,21 @@ class Config:
         print(f"set random image to {random}")
         self.config["random"] = bool(random)
 
-    def get_neko_focus(self):
-        return self.config["focus"] == "neko"
+    def get_source(self):
+        return self.config["source"]
 
-    def set_neko_focus(self, focus: bool):
-        print(f"set neko focus to {focus}")
-        self.config["focus"] = "neko" if focus else "hentai"
-
-    def get_hentai_focus(self):
-        return self.config["focus"] == "hentai"
-
-    def set_hentai_focus(self, focus: bool):
-        print(f"set hentai focus to {focus}")
-        self.config["focus"] = "hentai" if focus else "neko"
-
-    def get_raw_button_properties(self, button: str):
-        if button not in self.config["button-properties"]:
-            return {"hentai": {}, "neko": {}, "keybindings": []}
-        return self.config["button-properties"][button]
-
-    def get_focus(self):
-        return self.config["focus"]
+    def set_source(self, source: int):
+        self.config["source"] = source
 
     def get_button_properties(self, button: str):
-        return self.get_raw_button_properties(button)[self.get_focus()]
+        if button not in self.config["button-properties"]:
+            return {}
+        return self.config["button-properties"][button][str(self.source)]
 
     def get_button_keybindings(self, button: str):
-        return self.get_raw_button_properties(button)[f"keybindings"]
-
-    def get_api_url(self):
-        return self.config["api-url"]
+        if button not in self.config["button-properties"]:
+            return []
+        return self.config["button-properties"][button]["keybindings"]
 
     def get_padding(self):
         return self.config["padding"]
@@ -156,38 +134,19 @@ class Config:
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.config, f, indent=4)
 
-    def get_options(self, neko_tags: dict):
-        neko = self.get_neko_focus()
-        hentai = self.get_hentai_focus()
+    def get_options(self):
+        return Options(self.get_source(), self.get_sfw_filter(), self.get_random_image(), self.get_quarry())
 
-        neko_id = None
-        neko_tag = None
-
-        hentai_id = None
-
-        if neko:
-            if self.neko_quarry.isdigit():
-                neko_id = int(self.neko_quarry)
-            else:
-                if self.neko_quarry in neko_tags:
-                    neko_tag = neko_tags[self.neko_quarry][0]
-                else:
-                    return None
-
-        return Options(neko, hentai, self.sfw_filter, self.random_image, neko_tag, neko_id, hentai_id)
-
+    show_messagebox = property(get_show_messagebox, set_show_messagebox)
     window_title = property(fget=get_window_title, fset=set_window_tile)
     window_state = property(fget=get_window_state, fset=set_window_state)
     window_geometry = property(fget=get_window_geometry, fset=set_window_geometry)
 
-    neko_quarry = property(fget=get_neko_quarry, fset=set_neko_quarry)
-    hentai_quarry = property(fget=get_hentai_quarry, fset=set_hentai_quarry)
+    quarry = property(fget=get_quarry, fset=set_quarry)
     sfw_filter = property(fget=get_sfw_filter, fset=set_sfw_filter)
     random_image = property(fget=get_random_image, fset=set_random_image)
-    neko_focus = property(fget=get_neko_focus, fset=set_neko_focus)
-    hentai_focus = property(fget=get_hentai_focus, fset=set_hentai_focus)
+    source = property(fget=get_source, fset=set_source)
     padding = property(fget=get_padding)
 
-    api_url = property(fget=get_api_url)
     caching_count = property(fget=get_caching_count)
     history_count = property(fget=get_history_count)

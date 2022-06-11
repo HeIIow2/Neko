@@ -1,4 +1,5 @@
 import tkinter as tk
+from ttkwidgets.autocomplete import AutocompleteEntry
 import webbrowser
 
 import PIL.Image, PIL.ImageTk
@@ -27,23 +28,14 @@ class SidePanel:
         for keybinding in config.get_button_keybindings("next"):
             self.root_ref.bind(keybinding, self.next)
 
-        self.browse_neko_button = tk.Button(self.master, text="Neko", command=self.browse_neko)
-        self.browse_neko_button.grid(row=1, column=0, sticky="nsew", padx=(self.config.padding, 0), pady=(0, self.config.padding))
-        self.neko_query_var = tk.StringVar()
-        self.neko_query_var.set(self.config.neko_quarry)
-        self.neko_query = tk.Entry(self.master, textvariable=self.neko_query_var)
-        self.neko_query.bind("<Return>", self.browse_neko)
-        self.neko_query.bind("<KP_Enter>", self.browse_neko)
-        self.neko_query.grid(row=1, column=1, columnspan=3, sticky="nsew", padx=self.config.padding, pady=(0, self.config.padding))
-
-        # self.browse_hentai_button = tk.Button(self.master, text="Hentai", command=self.browse_hentai)
-        # self.browse_hentai_button.grid(row=2, column=0, sticky="nsew", padx=(self.config.padding, 0), pady=(0, self.config.padding))
-        # self.hentai_query_var = tk.StringVar()
-        # self.hentai_query_var.set(self.config.hentai_quarry)
-        # self.hentai_query = tk.Entry(self.master, textvariable=self.hentai_query_var)
-        # self.hentai_query.bind("<Return>", self.browse_hentai)
-        # self.hentai_query.bind("<KP_Enter>", self.browse_hentai)
-        # self.hentai_query.grid(row=2, column=1, columnspan=3, sticky="nsew", padx=self.config.padding, pady=(0, self.config.padding))
+        self.browse_button = tk.Button(self.master, text="Neko", command=self.browse)
+        self.browse_button.grid(row=1, column=0, sticky="nsew", padx=(self.config.padding, 0), pady=(0, self.config.padding))
+        self.query_var = tk.StringVar()
+        self.query_var.set(self.config.quarry)
+        self.query_entry = AutocompleteEntry(self.master, textvariable=self.query_var, completevalues=self.api.autocomplete_tags)
+        self.query_entry.bind("<Return>", self.browse)
+        self.query_entry.bind("<KP_Enter>", self.browse)
+        self.query_entry.grid(row=1, column=1, columnspan=3, sticky="nsew", padx=self.config.padding, pady=(0, self.config.padding))
 
         self.random_var = tk.IntVar()
         self.random_var.set(config.random_image)
@@ -66,8 +58,7 @@ class SidePanel:
         self.button_map = {
             "next": self.next_button,
             "prev": self.prev_button,
-            "neko": self.browse_neko_button,
-            # "hentai": self.browse_hentai_button,
+            "neko": self.browse_button,
             "random": self.random_checkbox,
             "sfw": self.sfw_checkbox,
             # "like": self.like_checkbox
@@ -84,7 +75,7 @@ class SidePanel:
         self.all_tag_label.grid(row=7, column=0, columnspan=4, sticky="sw", padx=self.config.padding, pady=(0, self.config.padding))
 
     def text_entry_is_focused(self):
-        return "!entry" in str(self.neko_query.focus_get())
+        return "!entry" in str(self.query_entry.focus_get())
 
     def next(self, event=None):
         if event is not None and self.text_entry_is_focused():
@@ -96,33 +87,24 @@ class SidePanel:
         if event is not None and self.text_entry_is_focused():
             return
         print("Previous")
-        self.other.previous()
+        self.other.request_prev()
 
     def update_buttons(self):
         for key, button in self.button_map.items():
             for property, value in self.config.get_button_properties(key).items():
                 button.config(**{property: value})
 
-    def browse_neko(self, event=None):
-        self.config.neko_focus = True
-        prev_query = self.config.neko_quarry
-        self.config.neko_quarry = self.neko_query_var.get()
-        if self.api.get_option() is None:
-            self.config.neko_quarry = prev_query
-            self.neko_query_var.set(prev_query)
-            return
+    def browse(self, event=None):
+        self.config.quarry = self.query_var.get()
+
         # unfocus entry
         self.master.focus_set()
-        self.update_buttons()
-        self.other.request_next()
-        print("Browse Neko")
+        self.other.request_next(browse=True)
 
-    def browse_hentai(self, event=None):
-        self.config.hentai_focus = True
-        self.master.focus_set()
-        self.config.hentai_quarry = self.hentai_query_var.get()
-        self.update_buttons()
-        print("Browse Hentai")
+    def fix_query(self, query: str):
+        self.config.quarry = query
+        self.query_var.set(query)
+        self.query_entry.focus_set()
 
     def toggle_random(self, event=None):
         if event is not None and self.text_entry_is_focused():
@@ -139,7 +121,7 @@ class SidePanel:
         self.config.sfw_filter = self.sfw_var.get()
 
     def update(self, data: api_module.Result):
-        self.current_image_label.config(text=f"Current Tag:\n{data.description}")
+        self.current_image_label.config(text=f"Current Tag:\n{data}")
 
         # update the colors
         self.master.config(bg=data.base_color)
@@ -149,11 +131,11 @@ class SidePanel:
         self.sfw_checkbox.config(bg=data.base_color, fg=data.text_base_color, activebackground=data.base_color, activeforeground=data.text_base_color)
         # self.like_checkbox.config(bg=data.base_color, fg=data.text_base_color, activebackground=data.base_color, activeforeground=data.text_base_color)
 
-        self.neko_query.config(bg=data.elem_color, fg=data.text_elem_color)
+        self.query_entry.config(bg=data.elem_color, fg=data.text_elem_color)
         # self.hentai_query.config(bg=data.elem_color, fg=data.text_elem_color)
         self.next_button.config(bg=data.elem_color, fg=data.text_elem_color)
         self.prev_button.config(bg=data.elem_color, fg=data.text_elem_color)
-        self.browse_neko_button.config(bg=data.elem_color, fg=data.text_elem_color)
+        self.browse_button.config(bg=data.elem_color, fg=data.text_elem_color)
         # self.browse_hentai_button.config(bg=data.elem_color, fg=data.text_elem_color)
 
     def toggle_like(self, event=None):
@@ -163,7 +145,6 @@ class Gui:
     def __init__(self, config: files.Config, api: api_module.Api):
         self.config = config
         self.api = api
-        self.api.set_gui(self)
 
         self.open_window = True
         self.loaded = False
@@ -241,17 +222,13 @@ class Gui:
         self.image_label.config(image=self.current_img_tk)
         self.current_url = data.url
 
-    def request_next(self):
-        self.api.request()
+    def request_next(self, browse=False):
+        self.api.request_next(browse)
         print("Next")
 
-    def previous(self):
+    def request_prev(self):
         print("Previous")
-        result = self.api.get_previous()
-        if result is not None:
-            self.update_content(result)
-        else:
-            print("No previous images saved")
+        self.api.request_prev()
 
     def open_url(self, event):
         print(f"Open URL {self.current_url}")
@@ -278,8 +255,11 @@ class Gui:
         try:
             request = self.api.get_request()
             if request is not None:
-                self.update_content(request)
-                self.loaded = True
+                if isinstance(request, str):
+                    self.side_panel.fix_query(request)
+                else:
+                    self.update_content(request)
+                    self.loaded = True
 
             if self.loaded:
                 self.master.update()
