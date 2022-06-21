@@ -7,8 +7,7 @@
         600
     ],
     "sfw": false,
-    "random": false,
-    "quarry": "boobs",
+    "random": true,
     "source": 0,
     "padding": 5,
     "button-properties": {
@@ -73,5 +72,17 @@
         }
     },
     "caching-count": 10,
-    "history-count": 10
+    "history-count": 10,
+    "sources": [
+        {
+            "id": 0,
+            "name": "Hellow Neko",
+            "quarry": "belly"
+        },
+        {
+            "id": 1,
+            "name": "N-Hentai",
+            "quarry": "177013"
+        }
+    ]
 }

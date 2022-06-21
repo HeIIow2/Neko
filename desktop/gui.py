@@ -1,58 +1,68 @@
-import tkinter as tk
-from ttkwidgets.autocomplete import AutocompleteEntry
+from tkinter import *
+from tkinter.ttk import *
 import webbrowser
 
-import PIL.Image, PIL.ImageTk
+import PIL.Image
+import PIL.ImageTk
 import _tkinter
 from PIL import ImageFilter, ImageTk
+from ttkwidgets.autocomplete import AutocompleteEntry
 
 import files
 import retrieve as api_module
 
 
 class SidePanel:
-    def __init__(self, other, master, config: files.Config, api: api_module.Api):
+    def __init__(self, other, master, style: Style, config: files.Config, api: api_module.Api):
         self.other = other
         self.root_ref = other.master
         self.master = master
         self.config = config
         self.api = api
+        self.style = style
 
-        self.prev_button = tk.Button(self.master, text="Previous", command=self.previous)
+        self.prev_button = Button(self.master, text="Previous", command=self.previous)
         self.prev_button.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=(self.config.padding, 0), pady=self.config.padding)
         for keybinding in config.get_button_keybindings("prev"):
             self.root_ref.bind(keybinding, self.previous)
 
-        self.next_button = tk.Button(self.master, text="Next", command=self.next)
+        self.next_button = Button(self.master, text="Next", command=self.next)
         self.next_button.grid(row=0, column=2, columnspan=2, sticky="nsew", padx=self.config.padding, pady=self.config.padding)
         for keybinding in config.get_button_keybindings("next"):
             self.root_ref.bind(keybinding, self.next)
 
-        self.browse_button = tk.Button(self.master, text="Neko", command=self.browse)
+        self.browse_button = Button(self.master, text="Neko", command=self.browse)
         self.browse_button.grid(row=1, column=0, sticky="nsew", padx=(self.config.padding, 0), pady=(0, self.config.padding))
-        self.query_var = tk.StringVar()
+        self.query_var = StringVar()
         self.query_var.set(self.config.quarry)
         self.query_entry = AutocompleteEntry(self.master, textvariable=self.query_var, completevalues=self.api.autocomplete_tags)
+        self.query_entry.bind("<Enter>", self.update_autocomplete)
         self.query_entry.bind("<Return>", self.browse)
         self.query_entry.bind("<KP_Enter>", self.browse)
         self.query_entry.grid(row=1, column=1, columnspan=3, sticky="nsew", padx=self.config.padding, pady=(0, self.config.padding))
 
-        self.random_var = tk.IntVar()
+        self.source_var = StringVar()
+        self.source_var.set(self.config.get_current_source_data()["name"])
+        self.source_dropdown = Combobox(self.master, textvariable=self.source_var, values=self.config.get_source_dropdown_options(), state="readonly")
+        self.source_dropdown.bind("<<ComboboxSelected>>", self.change_source)
+        self.source_dropdown.grid(row=2, column=0, columnspan=4, sticky="nsew", padx=self.config.padding, pady=(0, self.config.padding))
+
+        self.random_var = IntVar()
         self.random_var.set(config.random_image)
-        self.random_checkbox = tk.Checkbutton(self.master, variable=self.random_var, command=self.toggle_random, text="shuffle Images")
+        self.random_checkbox = Checkbutton(self.master, variable=self.random_var, command=self.toggle_random, text="shuffle Images")
         self.random_checkbox.grid(row=3, column=0, columnspan=4, sticky="nsw", padx=self.config.padding, pady=(0, self.config.padding))
         for keybinding in config.get_button_keybindings("random"):
             self.root_ref.bind(keybinding, self.toggle_random)
 
-        self.sfw_var = tk.IntVar()
+        self.sfw_var = IntVar()
         self.sfw_var.set(config.sfw_filter)
-        self.sfw_checkbox = tk.Checkbutton(self.master, variable=self.sfw_var, command=self.toggle_sfw, text="Only SFW")
+        self.sfw_checkbox = Checkbutton(self.master, variable=self.sfw_var, command=self.toggle_sfw, text="Only SFW")
         self.sfw_checkbox.grid(row=4, column=0, columnspan=4, sticky="nsw", padx=self.config.padding, pady=(0, self.config.padding))
         for keybinding in config.get_button_keybindings("sfw"):
             self.root_ref.bind(keybinding, self.toggle_sfw)
 
-        # self.like_var = tk.IntVar()
-        # self.like_checkbox = tk.Checkbutton(self.master, variable=self.like_var, command=self.toggle_like, text="Like")
+        # self.like_var = IntVar()
+        # self.like_checkbox = Checkbutton(self.master, variable=self.like_var, command=self.toggle_like, text="Like")
         # self.like_checkbox.grid(row=5, column=0, columnspan=4, sticky="nsw", padx=self.config.padding, pady=(0, self.config.padding))
 
         self.button_map = {
@@ -67,15 +77,24 @@ class SidePanel:
         self.update_buttons()
 
         self.master.rowconfigure(6, weight=1)
-        self.current_image_label = tk.Label(self.master, text="Current Image:\n", justify="left")
+        self.current_image_label = Label(self.master, text="Current Image:\n", justify="left")
         self.current_image_label.grid(row=6, column=0, columnspan=4, sticky="w", padx=self.config.padding, pady=(0, self.config.padding))
 
         self.master.rowconfigure(7, weight=1)
-        self.all_tag_label = tk.Label(self.master, text=f"all tags:\n{api.all_tags}", justify="left")
+        self.all_tag_label = Label(self.master, text=f"all tags:\n{api.all_tags}", justify="left")
         self.all_tag_label.grid(row=7, column=0, columnspan=4, sticky="sw", padx=self.config.padding, pady=(0, self.config.padding))
+
+    def change_source(self, event=None):
+        self.config.set_current_source(self.source_var.get())
+        self.update_buttons()
+        self.fix_query(self.config.quarry)
+        self.browse()
 
     def text_entry_is_focused(self):
         return "!entry" in str(self.query_entry.focus_get())
+
+    def update_autocomplete(self, event=None):
+        self.query_entry.config(completevalues=self.api.autocomplete_tags)
 
     def next(self, event=None):
         if event is not None and self.text_entry_is_focused():
@@ -101,9 +120,9 @@ class SidePanel:
         self.master.focus_set()
         self.other.request_next(browse=True)
 
-    def fix_query(self, query: str):
-        self.config.quarry = query
-        self.query_var.set(query)
+    def fix_query(self, quarry: str):
+        self.config.quarry = quarry
+        self.query_var.set(quarry)
         self.query_entry.focus_set()
 
     def toggle_random(self, event=None):
@@ -124,19 +143,15 @@ class SidePanel:
         self.current_image_label.config(text=f"Current Tag:\n{data}")
 
         # update the colors
-        self.master.config(bg=data.base_color)
-        self.current_image_label.config(bg=data.base_color, fg=data.text_base_color)
-        self.all_tag_label.config(bg=data.base_color, fg=data.text_base_color)
-        self.random_checkbox.config(bg=data.base_color, fg=data.text_base_color, activebackground=data.base_color, activeforeground=data.text_base_color)
-        self.sfw_checkbox.config(bg=data.base_color, fg=data.text_base_color, activebackground=data.base_color, activeforeground=data.text_base_color)
-        # self.like_checkbox.config(bg=data.base_color, fg=data.text_base_color, activebackground=data.base_color, activeforeground=data.text_base_color)
-
-        self.query_entry.config(bg=data.elem_color, fg=data.text_elem_color)
-        # self.hentai_query.config(bg=data.elem_color, fg=data.text_elem_color)
-        self.next_button.config(bg=data.elem_color, fg=data.text_elem_color)
-        self.prev_button.config(bg=data.elem_color, fg=data.text_elem_color)
-        self.browse_button.config(bg=data.elem_color, fg=data.text_elem_color)
-        # self.browse_hentai_button.config(bg=data.elem_color, fg=data.text_elem_color)
+        self.style.configure("TLabel", foreground=data.text_base_color, background=data.base_color)
+        self.style.configure("TFrame", foreground=data.text_base_color, background=data.base_color)
+        self.style.configure("TCheckbutton", foreground="#000", background=data.base_color)
+        self.style.map("TCheckbutton", background=[('active', data.base_color)])
+        self.style.configure("TCombobox", background=data.elem_color, foreground="#000", cursor="hand1")
+        self.style.configure("TEntry", background=data.elem_color, foreground="#000", cursor="hand1")
+        self.style.configure("TButton", background=data.elem_color, foreground=data.text_elem_color, cursor="hand1")
+        self.style.map('TButton', background=[('active', data.elem_color)])
+        self.style.configure("TScrollbar", background=data.elem_color, foreground=data.text_elem_color)
 
     def toggle_like(self, event=None):
         print("Toggle like")
@@ -151,7 +166,11 @@ class Gui:
         self.current_img = None
         self.current_url = None
 
-        self.master = tk.Tk()
+        self.master = Tk()
+
+        self.style = Style(self.master)
+        self.style.theme_use('alt')
+
         self.master.rowconfigure(0, weight=1)
         self.master.columnconfigure(0, weight=1)
         self.master.title(config.window_title)
@@ -160,19 +179,20 @@ class Gui:
 
         self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        self.main_frame = tk.Frame(self.master)
+        self.main_frame = Frame(self.master)
         self.main_frame.grid(row=0, column=0, sticky="nsew")
         self.width, self.height = self.main_frame.winfo_screenwidth(), self.main_frame.winfo_screenheight()
         self.main_frame.bind("<Configure>", self.on_resize)
 
         self.current_img_tk = None
-        self.image_label = tk.Label(self.main_frame, borderwidth=0, highlightthickness=0)
+        self.image_label = Label(self.main_frame)
+        # self.image_label = Label(self.main_frame, borderwidth=0, highlightthickness=0)
         self.image_label.grid(row=0, column=0, sticky="nsew")
         self.image_label.bind("<Double-Button-1>", self.open_url)
 
-        self.side_panel_frame = tk.Frame(self.master)
+        self.side_panel_frame = Frame(self.master)
         self.side_panel_frame.grid(row=0, column=1, sticky="nse")
-        self.side_panel = SidePanel(self, self.side_panel_frame, self.config, self.api)
+        self.side_panel = SidePanel(self, self.side_panel_frame, self.style, self.config, self.api)
 
         self.request_next()
 
